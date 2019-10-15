@@ -1,0 +1,3 @@
+Spotify
+Client ID 6e0b146936924e638c628d1b5929bb33
+Client Secret 380ead4aef204e18bdfca2d13da3d610
