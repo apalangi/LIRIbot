@@ -8,7 +8,7 @@ var Spotify = require("node-spotify-api");
 
 var fs = require("fs");
 
-var moment = require("moment");
+//var moment = require("moment");
 
 var spotify = new Spotify(keys.spotify);
 
@@ -49,108 +49,104 @@ var getSong = function(songName) {
 
 
 
-//var userInput = process.argv[2];
-//var userQuery = process.argv[3];
+var getMovie = function(movieName) {
+  if (movieName === undefined) {
+    movieName = "Mr Nobody";
+    console.log("If you haven't watched 'Mr. Nobody', then you should, it's on Netflix")
+  }
 
+  var urlHit =
+    "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=full&tomatoes=true&apikey=trilogy";
 
-
-//userCommand(userInput);
-
-//function userCommand(userInput){
-   // switch (userInput){
-        //case "movie-this":
-           // movieThis();
-            //break;
-       // default: 
-      //      break;
-    //}
-//};
-var movieName = "";
-
-function movieThis() {
-    axios.get("http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy")
-
-    .then(function(response) {
-
-
-    if (!error && response.statusCode == 200) {
-      console.log("\n===========================================" +
-          "\nSearch Results:" +
-          "\n-------------------------------------------");
-
-      var movieResults = "\nMovie Title: " + JSON.parse(body)["Title"] +
-          "\n" +
-          "\nYear Came Out: " + JSON.parse(body)["Year"] +
-          "\nIMBDB rating: " + JSON.parse(body)["imdbRating"] +
-          "\nCountry of Production: " + JSON.parse(body)["Country"] +
-          "\nLanguage: " + JSON.parse(body)["Language"] + "\n" +
-          "\nPlot: " + JSON.parse(body)["Plot"] +
-          "\n"+
-          "\nActors: " + JSON.parse(body)["Actors"] + "\n" +
-          "\nRotten Tomatoes Rating: " + JSON.parse(body)["tomatoRating"] +
-          "\nRotten Tomatoes URL: " + JSON.parse(body)["tomatoURL"] +
-          "\n==========================================\n";
-      console.log(movieResults);
-      fs.appendFile("./log.txt", "\n" + movieResults);
-
-      
- //   var jsonData = response.data;
- //   var showData = [
-   //   Title = jsonData.title,
-     //  Released = jsonData.released,
-       //IMDB = jsonData.IMDBrating,
-     //  Rotten = jsonData.rottenTomatoesValue,
-      // Country  = jsonData.country,
-      // Plot = jsonData.plot,
-       //Actors =jsonData.actors
-    
-
-    //console.log(showData);
-  };
-});
-};
-
-var mrNobody = "http://www.imdb.com/title/tt0485947/";
-var mrNobodyMessage = "\n==========================================" +
-    "\nIf you haven't watched 'Mr. Nobody', then you should: " +
-    "\n" + mrNobody +
-    "\nIt's on Netflix!" +
-    "\n==========================================";
-    
-
-//var runThis = function(argOne, argTwo) {
- // pick (argOne, argTwo);
-//};
-
-var getBand = function(artist) {
-  var queryURL = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=";
-
-  axios.get(queryURL).then(
+  axios.get(urlHit).then(
     function(response) {
       var jsonData = response.data;
 
-      if (!jsonData.length) {
-        console.log("No results found for " + artist);
-        return;
-      }
-
-      console.log("Upcoming concerts for " + artist + ":");
-
-      for (var i = 0; i < jsonData.length; i++) {
-        var show = jsonData[i];
-
-        
-        console.log(
-          show.venue.city +
-            "," +
-            (show.venue.region || show.venue.country) +
-            " at " +
-            show.venue.name +
-            " " +
-            moment(show.datetime).format("MM/DD/YYYY")
-        );
-      }
+      console.log("Title: " + jsonData.Title);
+      console.log("Year: " + jsonData.Year);
+      console.log("Rated: " + jsonData.Rated);
+      console.log("IMDB Rating: " + jsonData.imdbRating);
+      console.log("Country: " + jsonData.Country);
+      console.log("Language: " + jsonData.Language);
+      console.log("Plot: " + jsonData.Plot);
+      console.log("Actors: " + jsonData.Actors);
+      console.log("Rotten Tomatoes Rating: " + jsonData.Ratings[1].Value);
     }
   );
 };
 
+//var getBand = function(artist) {
+//  var queryURL = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=";
+
+//  axios.get(queryURL).then(
+  //  function(response) {
+    //  var jsonData = response.data;
+
+      //if (!jsonData.length) {
+        //console.log("No results found for " + artist);
+       // return;
+   //   }
+//
+  //    console.log("Upcoming concerts for " + artist + ":");
+
+    //  for (var i = 0; i < jsonData.length; i++) {
+      //  var show = jsonData[i];
+
+        
+        //console.log(
+         // show.venue.city +
+         //   "," +
+           // (show.venue.region || show.venue.country) +
+        //    " at " +
+          //  show.venue.name +
+           // " " +
+     //       moment(show.datetime).format("MM/DD/YYYY")
+       // );
+     // }
+    //}
+//  );
+//};
+
+
+var doWhatItSays = function() {
+  fs.readFile("random.txt", "utf8", function(error, data) {
+    console.log(data);
+
+    var dataArr = data.split(",");
+
+    if (dataArr.length === 2) {
+      pick(dataArr[0], dataArr[1]);
+    } else if (dataArr.length === 1) {
+      pick(dataArr[0]);
+    }
+  });
+};
+
+
+var pick = function(caseData, functionData) {
+  switch (caseData) {
+  //case "concert-this":
+   // getMyBands(functionData);
+    //break;
+  case "spotify-this-song":
+    getSong(functionData);
+    break;
+  case "movie-this":
+    getMovie(functionData);
+    break;
+  case "do-what-it-says":
+    doWhatItSays();
+    break;
+  default:
+    console.log("LIRI doesn't know that");
+  }
+};
+
+
+var runThis = function(argOne, argTwo) {
+ pick (argOne, argTwo);
+};
+
+ 
+
+runThis(process.argv[2], process.argv.slice(3).join(" "));
